@@ -1,0 +1,9 @@
+.page_access_menus_parent {
+    -webkit-app-region: no-drag;
+    /* width: 100%; */
+    /* height: 200px; */
+    margin: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
