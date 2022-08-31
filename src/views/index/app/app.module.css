@@ -1,0 +1,180 @@
+div, p, img {
+    user-select:none;
+    -webkit-user-drag: none;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+.mainView {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -webkit-app-region: drag;
+}
+
+.menuView {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    height: 100%;
+    background-color: #F4ECEE;
+}
+
+.contentView {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.menuParent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.menuButtonFocus {
+    height: 40px;
+    border: 0px;
+    border-radius: 8px;
+    margin: 2px 10px;
+    background-color: #DCD6D6;
+    -webkit-app-region: no-drag;
+    outline: none;
+}
+
+.menuButtonUnfocus {
+    height: 40px;
+    border: 0px;
+    border-radius: 8px;
+    margin: 2px 10px;
+    background-color: #F4ECEE;
+    -webkit-app-region: no-drag;
+    outline: none;
+}
+
+.menuButtonContent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+}
+
+.menuButtonIcon {
+    height: 23px;
+    width: 23px;
+    margin-left: 4px;
+    -webkit-user-drag: none;
+}
+
+.menuButtonText {
+    color: #202327;
+    font-size: 14px;
+    margin-left: 8px;
+    line-height: 100%;
+}
+
+.menuTitle {
+    color: #797576;
+    font-size: 13px;
+    margin: 12px 19px 0px 19px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.contentParent {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.contentElement {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.titleView {
+    width: 70px;
+    height: 30px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: flex;
+    flex-direction: row;
+    -webkit-app-region: no-drag;
+}
+
+
+/* 关闭最小化按钮*/
+.titleElementButton, .titleElementCloseButton {
+    display: flex;
+    width: 35px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border: 0px;
+    outline: 0px;
+    background: transparent;
+}
+
+.titleElementButton:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.titleElementButton:active {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.titleElementCloseButton:hover {
+    background: #e81123;
+}
+
+.titleElementCloseButton:active {
+    background: #bf0f1d;
+}
+
+.titleElementCloseButton:hover,.titleElementCloseButton:active .titleCloseElement{
+    fill: white;
+}
+
+.titleElement, .titleCloseElement {
+    width: 18px;
+    height: 18px;
+}
+
+/* @media (prefers-color-scheme: dark) { 
+    .menuView {  
+        background-color: #2F2A2E;
+    }
+
+    .menuButton {
+        background-color: #2F2A2E;
+    }
+
+    .menuButtonFocus {
+        background-color: #484447;
+    }
+    
+    .menuButtonUnfocus {
+        background-color: #2F2A2E;
+    }
+
+    .menuButtonText {
+        color: #FFFFFF;
+    }
+  }  */
