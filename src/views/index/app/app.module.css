@@ -3,6 +3,10 @@ div, p, img {
     -webkit-user-drag: none;
 }
 
+button, input {
+    -webkit-app-region: no-drag;
+}
+
 html {
     box-sizing: border-box;
 }
