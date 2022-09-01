@@ -61,7 +61,7 @@
     "react-dom": "^17.0.1",
     "react-inlinesvg": "^2.3.0",
     "react-refresh": "^0.8.3",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "^5.0.1",
     "resolve": "1.18.1",
     "resolve-url-loader": "^3.1.2",
     "sass-loader": "8.0.2",
@@ -141,7 +141,8 @@
     "electron": "^17.1.2",
     "electron-builder": "^22.14.13",
     "foreman": "^3.0.1",
-    "react-aria": "^3.14.0"
+    "react-aria": "^3.14.0",
+    "react-error-overlay": "^6.0.9"
   },
   "jest": {
     "roots": [
@@ -197,5 +198,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
   }
 }
