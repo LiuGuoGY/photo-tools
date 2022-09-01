@@ -45,11 +45,15 @@ class PageStart extends React.Component {
             let dirPath = result.filePaths[0];
             console.log(dirPath);
             await db.connect(Path.join(dirPath, "./photos.db"));
-            await db.run("CREATE TABLE photos (id, name)");
+            // await db.run("CREATE TABLE photos (id, name)");
             this.findAllfiles(dirPath);
             
             db.close();
         }
+    }
+
+    async handleFile(file) {
+        await db.run("CREATE TABLE photos (id, name)");
     }
 
     findAllfiles(fileRootPath) {
@@ -61,12 +65,13 @@ class PageStart extends React.Component {
                 this.findAllfiles(filePath);
             } else {
                 console.log(file);
-                
+                this.handleFile(file);
             }
         })
     }
 
     render() {
+        console.log(remote.app.getPath('userData'));
         return (
             <div style={{ width: "100%", height: "100%", position: "absolute" }}>
                 <div className={commonStyles.page_title}>快速开始</div>
