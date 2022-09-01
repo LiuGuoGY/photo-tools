@@ -5,6 +5,7 @@ import EXIF from 'exif-js';
 import MD5 from 'crypto-js/md5';
 const remote = window.require('@electron/remote');
 const fs = window.require('fs');
+const path = window.require('path');
 
 class PageStart extends React.Component {
     handleChange(e) {
@@ -32,7 +33,6 @@ class PageStart extends React.Component {
     }
 
     async handleClick() {
-        console.log("hahah")
         let result = await remote.dialog.showOpenDialog({
             title: "选择目录",
             properties: ['openDirectory'],
@@ -40,16 +40,21 @@ class PageStart extends React.Component {
         if (!result.canceled && result.filePaths) {
             let path = result.filePaths[0];
             console.log(path);
-            fs.readdir(path, (err, files) => {
-                if (err)
-                    console.log(err);
-                else {
-                    files.forEach(file => {
-                        console.log(file);
-                    })
-                }
-            })
+            this.findAllfiles(path);
         }
+    }
+
+    findAllfiles(fileRootPath) {
+        let files = fs.readdirSync(fileRootPath);
+        files.forEach(file => {
+            let filePath = path.join(fileRootPath, file);
+            let stat = fs.lstatSync(filePath);
+            if(stat.isDirectory()) {
+                this.findAllfiles(filePath);
+            } else {
+                console.log(file);
+            }
+        })
     }
 
     render() {
