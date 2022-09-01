@@ -3,9 +3,13 @@ import commonStyles from "../common.module.css";
 import styles from "./start.module.css";
 import EXIF from 'exif-js';
 import MD5 from 'crypto-js/md5';
+import Sqlite from './sqlite';
+
 const remote = window.require('@electron/remote');
-const fs = window.require('fs');
-const path = window.require('path');
+const Fs = window.require('fs');
+const Path = window.require('path');
+
+const db = Sqlite.getInstance();
 
 class PageStart extends React.Component {
     handleChange(e) {
@@ -38,21 +42,26 @@ class PageStart extends React.Component {
             properties: ['openDirectory'],
         });
         if (!result.canceled && result.filePaths) {
-            let path = result.filePaths[0];
-            console.log(path);
-            this.findAllfiles(path);
+            let dirPath = result.filePaths[0];
+            console.log(dirPath);
+            await db.connect(Path.join(dirPath, "./photos.db"));
+            await db.run("CREATE TABLE photos (id, name)");
+            this.findAllfiles(dirPath);
+            
+            db.close();
         }
     }
 
     findAllfiles(fileRootPath) {
-        let files = fs.readdirSync(fileRootPath);
+        let files = Fs.readdirSync(fileRootPath);
         files.forEach(file => {
-            let filePath = path.join(fileRootPath, file);
-            let stat = fs.lstatSync(filePath);
+            let filePath = Path.join(fileRootPath, file);
+            let stat = Fs.lstatSync(filePath);
             if(stat.isDirectory()) {
                 this.findAllfiles(filePath);
             } else {
                 console.log(file);
+                
             }
         })
     }
