@@ -3,6 +3,7 @@ import commonStyles from "../common.module.css";
 import styles from "./start.module.css";
 import EXIF from 'exif-js';
 import MD5 from 'crypto-js/md5';
+import Crypto from 'crypto-js';
 import Sqlite from './sqlite';
 
 const remote = window.require('@electron/remote');
@@ -67,7 +68,11 @@ class PageStart extends React.Component {
     async handleFile(filePath) {
         let fileData = Fs.readFileSync(filePath);
         console.log(fileData);
-        let hash = MD5(fileData).toString().toUpperCase();
+        
+        let hash = Crypto.createHash('md5');
+        hash.update(fileData);
+        let final = hash.digest('hex');
+        console.log(final);
         // let fileName = Path.basename(filePath);
         // let file = new File(fileData, Path.basename(filePath));
         // let tags = EXIF.getAllTags(file);
