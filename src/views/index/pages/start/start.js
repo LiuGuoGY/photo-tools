@@ -47,9 +47,8 @@ class PageStart extends React.Component {
         if (!result.canceled && result.filePaths) {
             let dirPath = result.filePaths[0];
             console.log(dirPath);
-            await db.connect(Path.join(dirPath, "./photos.db"));
+            await db.connect(Path.join(userPath, dbPath));
             this.findAllfiles(dirPath);
-            
             db.close();
         }
     }
@@ -66,13 +65,13 @@ class PageStart extends React.Component {
 
     async handleFile(filePath) {
         let fileData = Fs.readFileSync(filePath);
-        let hash = MD5(fileData);
+        let hash = MD5(fileData).toString().toUpperCase();
         let fileName = Path.basename(filePath);
         // let file = new File(fileData, Path.basename(filePath));
         // let tags = EXIF.getAllTags(file);
         // console.log(tags);
-        console.log(hash.toString().toUpperCase());
-        // db.run('INSERT INTO photos(filename, path, hash, shottime) VALUES(?, ?, ?, ?)', [fileName, filePath, hash, ]);
+        console.log(hash);
+        db.run('INSERT INTO photos (filename, path, hash, shottime) VALUES(?, ?, ?, ?)', [fileName, filePath, hash, 0]);
     }
 
     findAllfiles(fileRootPath) {
@@ -81,6 +80,7 @@ class PageStart extends React.Component {
             let filePath = Path.join(fileRootPath, file);
             let stat = Fs.lstatSync(filePath);
             if(stat.isDirectory()) {
+                //继续寻找子目录
                 this.findAllfiles(filePath);
             } else {
                 this.handleFile(filePath);
