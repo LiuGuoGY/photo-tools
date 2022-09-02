@@ -8,6 +8,8 @@ import Sqlite from './sqlite';
 const remote = window.require('@electron/remote');
 const Fs = window.require('fs');
 const Path = window.require('path');
+const userPath = remote.app.getPath('userData');
+const dbPath = 'photos.db'
 
 const db = Sqlite.getInstance();
 
@@ -23,7 +25,7 @@ class PageStart extends React.Component {
                 var hash = MD5(reader.result);
                 console.log(hash.toString().toUpperCase());
             }
-            reader.readAsBinaryString(file);
+            reader.readAsArrayBuffer(file);
             EXIF.getData(file, function () {
                 let exifData = EXIF.pretty(this);
                 if (exifData) {
@@ -41,19 +43,37 @@ class PageStart extends React.Component {
             title: "选择目录",
             properties: ['openDirectory'],
         });
+        await this.checkDB();
         if (!result.canceled && result.filePaths) {
             let dirPath = result.filePaths[0];
             console.log(dirPath);
             await db.connect(Path.join(dirPath, "./photos.db"));
-            // await db.run("CREATE TABLE photos (id, name)");
             this.findAllfiles(dirPath);
             
             db.close();
         }
     }
 
-    async handleFile(file) {
-        await db.run("CREATE TABLE photos (id, name)");
+    async checkDB() {
+        if(!Fs.existsSync(Path.join(userPath, dbPath))) {
+            console.log("数据库不存在，创建数据库");
+            Fs.writeFileSync(Path.join(userPath, dbPath), "");
+        }
+        await db.connect(Path.join(userPath, dbPath));
+        await db.run("create table if not exists photos ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'filename', 'path', 'hash', 'shottime')");
+        db.close();
+    }
+
+    async handleFile(filePath) {
+        let fileData = Fs.readFileSync(filePath);
+        console.log(fileData);
+        let hash = MD5(fileData).toString().toUpperCase();
+        // let fileName = Path.basename(filePath);
+        // let file = new File(fileData, Path.basename(filePath));
+        // let tags = EXIF.getAllTags(file);
+        // console.log(tags);
+        console.log(hash.toString().toUpperCase());
+        // db.run('INSERT INTO photos(filename, path, hash, shottime) VALUES(?, ?, ?, ?)', [fileName, filePath, hash, ]);
     }
 
     findAllfiles(fileRootPath) {
@@ -64,14 +84,12 @@ class PageStart extends React.Component {
             if(stat.isDirectory()) {
                 this.findAllfiles(filePath);
             } else {
-                console.log(file);
-                this.handleFile(file);
+                this.handleFile(filePath);
             }
         })
     }
 
     render() {
-        console.log(remote.app.getPath('userData'));
         return (
             <div style={{ width: "100%", height: "100%", position: "absolute" }}>
                 <div className={commonStyles.page_title}>快速开始</div>
