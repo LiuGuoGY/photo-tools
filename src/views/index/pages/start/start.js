@@ -2,8 +2,9 @@ import React from 'react';
 import commonStyles from "../common.module.css";
 import styles from "./start.module.css";
 import EXIF from 'exif-js';
-import MD5 from 'md5'
+import MD5 from 'md5';
 import Sqlite from './sqlite';
+import Crypto from 'crypto';
 
 const remote = window.require('@electron/remote');
 const Fs = window.require('fs');
@@ -42,14 +43,14 @@ class ScanContent extends React.Component {
                 fileNum: 0,
                 scanNum: 0,
             })
-            await this.findAllfiles(dirPath, async ()=>{
+            await this.findAllfiles(dirPath, async () => {
                 this.setState({
                     fileNum: this.state.fileNum + 1,
                 });
             });
             console.log(this.state.fileNum);
             await db.connect(Path.join(userPath, dbPath));
-            await this.findAllfiles(dirPath, async (file)=>{
+            await this.findAllfiles(dirPath, async (file) => {
                 await this.handleFile(file);
             });
             await db.connect(Path.join(userPath, dbPath));
@@ -79,14 +80,26 @@ class ScanContent extends React.Component {
         this.setState({
             toast: "正在扫描：" + filePath,
         })
-        let fileData = await this.readFile(filePath);
-        let hash = MD5(fileData).toString().toUpperCase();
+        // let fileData = await this.readFile(filePath);
+        // let hash = MD5(fileData).toString().toUpperCase();
+        let hash = await this.getMD5(filePath);
         let fileName = Path.basename(filePath);
         await db.run('INSERT INTO photos (filename, path, hash) VALUES(?, ?, ?)', [fileName, filePath, hash]);
         this.setState({
             scanNum: this.state.scanNum + 1,
-            progress: Math.round((this.state.scanNum + 1) / this.state.fileNum * 100)
+            progress: Math.round((this.state.scanNum + 1) / this.state.fileNum * 100),
+            toast: "",
         })
+    }
+
+    getMD5(filePath) {
+        return new Promise((resolve, reject) => {
+            const hash = Crypto.createHash('sha1');
+            const stream = Fs.createReadStream(filePath);
+            stream.on('error', err => reject(err));
+            stream.on('data', chunk => hash.update(chunk));
+            stream.on('end', () => resolve(hash.digest('hex')));
+        });
     }
 
     readFile(file) {
@@ -102,14 +115,14 @@ class ScanContent extends React.Component {
 
     async findAllfiles(fileRootPath, cb) {
         let files = Fs.readdirSync(fileRootPath);
-        for(let i = 0; i < files.length; i++) {
+        for (let i = 0; i < files.length; i++) {
             let filePath = Path.join(fileRootPath, files[i]);
             let stat = Fs.lstatSync(filePath);
             if (stat.isDirectory()) {
                 //继续寻找子目录
-                await this.scanAllfiles(filePath);
+                await this.findAllfiles(filePath, cb);
             } else {
-                if(/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(filePath)) {
+                if (/\.(gif|jpg|jpeg|png|GIF|JPG|PNG|HEIC|heic)$/.test(filePath)) {
                     await cb(filePath);
                 } else {
                     console.log("不是图片：" + filePath);
@@ -121,9 +134,9 @@ class ScanContent extends React.Component {
     render() {
         return (
             <div className={styles.scan_content}>
-                <div className={styles.dir_parent}>
+                {/* <div className={styles.dir_parent}>
                     <button className={styles.sel_dir_button} onClick={() => { this.handleClick() }}>选择目录</button>
-                </div>
+                </div> */}
                 <div className={styles.spinner_parent}>
                     <div className={styles.spinner}>
                         <div></div>
