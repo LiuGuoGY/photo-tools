@@ -2,7 +2,6 @@ import React from 'react';
 import commonStyles from "../common.module.css";
 import styles from "./start.module.css";
 import EXIF from 'exif-js';
-import MD5 from 'md5';
 import Sqlite from './sqlite';
 import Crypto from 'crypto';
 
