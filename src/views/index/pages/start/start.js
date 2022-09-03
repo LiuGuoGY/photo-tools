@@ -49,6 +49,12 @@ class PageStart extends React.Component {
             console.log(dirPath);
             await db.connect(Path.join(userPath, dbPath));
             this.findAllfiles(dirPath);
+            let res = await db.all(`SELECT * FROM photos
+            WHERE id > (
+              SELECT MIN(id) FROM photos d2  
+              WHERE photos.hash = d2.hash
+            )`);
+            console.log(res);
             db.close();
         }
     }
@@ -59,7 +65,7 @@ class PageStart extends React.Component {
             Fs.writeFileSync(Path.join(userPath, dbPath), "");
         }
         await db.connect(Path.join(userPath, dbPath));
-        await db.run("create table if not exists photos ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'filename', 'path', 'hash', 'shottime')");
+        await db.run("create table if not exists photos ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'filename', 'path', 'hash')");
         db.close();
     }
 
@@ -67,11 +73,7 @@ class PageStart extends React.Component {
         let fileData = Fs.readFileSync(filePath);
         let hash = MD5(fileData).toString().toUpperCase();
         let fileName = Path.basename(filePath);
-        // let file = new File(fileData, Path.basename(filePath));
-        // let tags = EXIF.getAllTags(file);
-        // console.log(tags);
-        console.log(hash);
-        db.run('INSERT INTO photos (filename, path, hash, shottime) VALUES(?, ?, ?, ?)', [fileName, filePath, hash, 0]);
+        db.run('INSERT INTO photos (filename, path, hash) VALUES(?, ?, ?)', [fileName, filePath, hash]);
     }
 
     findAllfiles(fileRootPath) {
@@ -89,17 +91,13 @@ class PageStart extends React.Component {
     }
 
     render() {
+        console.log("用户数据目录：" + userPath);
         return (
             <div style={{ width: "100%", height: "100%", position: "absolute" }}>
-                <div className={commonStyles.page_title}>快速开始</div>
-                <div className={styles.page_access_menus_parent}>
-                    <input
-                        type="file"
-                        ref={(el) => (this.fileInput = el)}
-                        accept="image/*"
-                        onChange={this.handleChange} />
+                <div className={commonStyles.page_title}>重复清理</div>
+                <div className={styles.page_parent}>
+                    <button className={styles.select_button} onClick={() => { this.handleClick() }}>选择目录</button>
                 </div>
-                <button className={styles.select_button} onClick={() => { this.handleClick() }}>选择目录</button>
             </div>
         );
     }
