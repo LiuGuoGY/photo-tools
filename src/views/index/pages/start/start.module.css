@@ -1,13 +1,188 @@
-.page_parent {
-    -webkit-app-region: no-drag;
-    /* width: 100%; */
-    /* height: 200px; */
-    margin: 20px;
+.page_content {
+    width: 100%;
+    height: 100%;
+    position: absolute;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.select_button {
+.page_parent {
+    -webkit-app-region: no-drag;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+}
 
+.scan_content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.spinner_parent {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* spinner */
+.spinner {
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+
+.spinner div {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    box-sizing: border-box;
+    border: 10px solid transparent;
+    border-radius: 50%;
+    border-top-color: #ad6ef5;
+    animation: spinnerOne 2s linear infinite;
+}
+
+.spinner div:nth-child(2) {
+    border: 10px solid transparent;
+    border-bottom-color: #ad6ef5;
+    animation: spinnerTwo 2s linear infinite;
+}
+
+@keyframes spinnerOne {
+    0% {
+        transform: rotate(0deg);
+        border-width: 10px;
+    }
+
+    50% {
+        transform: rotate(180deg);
+        border-width: 1px;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        border-width: 10px;
+    }
+
+}
+
+@keyframes spinnerTwo {
+    0% {
+        transform: rotate(0deg);
+        border-width: 1px;
+    }
+
+    50% {
+        transform: rotate(180deg);
+        border-width: 10px;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        border-width: 1px;
+    }
+}
+
+.scan_or_cancel_button {
+    width: 150px;
+    height: 50px;
+    position: absolute;
+    left: 0;
+    bottom: 100px;
+    right: 0;
+    margin: auto;
+}
+
+.button,
+.buttonStress {
+    /* border: 1px solid hsl(0, 0%, 93%); */
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 4px rgba(0, 0, 0, 0.04); */
+    border: 0px;
+    text-align: center;
+    width: 100%;
+    height: 40px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 1px 10px 1px 10px;
+}
+
+.button {
+    background: white;
+    color: black;
+}
+
+.button:active {
+    outline: none;
+    background: #0676E8;
+    color: white;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.buttonStress {
+    background: #1F8CFC;
+    /* background-image: linear-gradient(#4C9EF0, #1F8CFC); */
+    color: white;
+}
+
+.buttonStress:active {
+    outline: none;
+    background: #0676E8;
+}
+
+.buttonStress:focus {
+    outline: none;
+}
+
+.spinner p {
+    font-size: 45px;
+    color: #000;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.toast_parent {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toast_parent p {
+    font-size: 13px;
+    color: #626262;
+}
+
+.scan_or_cancel_button_parent {
+    width: 100%;
+    height: 100px;
+}
+
+.dir_parent {
+    width: 100%;
+    height: 30px;
+    align-items: center;
+}
+
+.sel_dir_button {
+    border: 0px;
+    text-align: center;
+    width: 60px;
+    height: 20px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: normal;
+    padding: 1px 10px 1px 10px;
+    background: rgb(130, 130, 130);
+    color: black;
 }

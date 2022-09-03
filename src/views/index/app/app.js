@@ -88,7 +88,7 @@ class App extends React.Component {
         let menus = [{
             items: [{
                 img: iconFlash,
-                text: "重复清理"
+                text: "照片清理"
             }]
         },{
             title: "基础",
