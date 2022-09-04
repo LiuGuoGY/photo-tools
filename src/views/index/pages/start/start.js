@@ -15,12 +15,10 @@ const db = Sqlite.getInstance();
 
 class ScanLoading extends React.Component {
     render() {
-        return (<div className={styles.spinner_parent}>
-            <div className={styles.spinner}>
-                <div></div>
-                <div></div>
-                <p>{this.props.text}</p>
-            </div>
+        return (<div className={styles.spinner}>
+            <div></div>
+            <div></div>
+            <p>{this.props.text}</p>
         </div>);
     }
 }
@@ -37,8 +35,10 @@ class ScanContent extends React.Component {
             fileNum: 0,
             //已扫描的数量
             scanNum: 0,
-            //状态: 0未扫描，1扫描中，2删除中
+            //状态: 0未扫描，1扫描中，2待删除，3删除完成
             status: 0,
+            //重复文件列表信息
+            dupFiles: [],
         }
     }
 
@@ -85,9 +85,16 @@ class ScanContent extends React.Component {
                 console.log("结果：")
                 console.log(res);
                 db.close();
-                this.setState({
-                    status: 0,
-                })
+                if (res && res.length > 0) {
+                    this.setState({
+                        status: 2,
+                        dupFiles: res,
+                    })
+                } else {
+                    this.setState({
+                        status: 0,
+                    })
+                }
             }
         } else if (this.state.status === 1) {
             this.setState({
@@ -172,24 +179,92 @@ class ScanContent extends React.Component {
     }
 
     async findAllfiles(fileRootPath, cb) {
-        let files = await this.readdir(fileRootPath);
-        for (let i = 0; i < files.length; i++) {
-            if (this.state.status === 0) {
-                return;
-            }
-            let filePath = Path.join(fileRootPath, files[i]);
-            let stat = await this.lstat(filePath);
-            if (stat.isDirectory()) {
-                //继续寻找子目录
-                await this.findAllfiles(filePath, cb);
-            } else {
-                if (/\.(gif|jpg|jpeg|png|GIF|JPG|PNG|HEIC|heic)$/.test(filePath)) {
-                    await cb(filePath);
+        try {
+            let files = await this.readdir(fileRootPath);
+            for (let i = 0; i < files.length; i++) {
+                if (this.state.status === 0) {
+                    return;
+                }
+                let filePath = Path.join(fileRootPath, files[i]);
+                let stat = await this.lstat(filePath);
+                if (stat.isDirectory()) {
+                    //继续寻找子目录
+                    await this.findAllfiles(filePath, cb);
                 } else {
-                    console.log("不是图片：" + filePath);
+                    if (/\.(gif|jpg|jpeg|png|GIF|JPG|PNG|HEIC|heic)$/.test(filePath)) {
+                        await cb(filePath);
+                    } else {
+                        // console.log("不是图片：" + filePath);
+                    }
                 }
             }
+        } catch (e) {
+            console.log(e)
         }
+    }
+
+    unlink(path) {
+        return new Promise(function (resolve, reject) {
+            Fs.unlink(path, (err => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            }));
+        });
+    }
+
+    async deletePhotos() {
+        for (let i = 0; i < this.state.dupFiles.length; i++) {
+            console.log(this.state.dupFiles[i].path);
+            await this.unlink(this.state.dupFiles[i].path);
+        }
+        this.setState({
+            progress: 0,
+            toast: "",
+            fileNum: 0,
+            scanNum: 0,
+            status: 0,
+            dupFiles: [],
+        })
+    }
+
+    cancelDeletePhotos() {
+        this.setState({
+            progress: 0,
+            toast: "",
+            fileNum: 0,
+            scanNum: 0,
+            status: 0,
+            dupFiles: [],
+        })
+    }
+
+    showLoadingOrTextView() {
+        if (this.state.status === 1) {
+            return (<ScanLoading text={this.state.progress + "%"}> </ScanLoading>);
+        } else if (this.state.status === 2) {
+            return (<div>{"本次扫描共发现" + this.state.dupFiles.length + "个重复文件，是否删除？"}</div>);
+        }
+        return null;
+    }
+
+    showWhatButtonsView() {
+        if (this.state.status === 0 || this.state.status === 1) {
+            return (
+                <div className={styles.scan_or_cancel_button}>
+                    <button className={(this.state.status === 0) ? styles.buttonStress : styles.buttonWarn} onClick={() => { this.handleClick() }}>{(this.state.status === 0) ? "开始扫描" : "结束扫描"}</button>
+                </div>
+            );
+        } else if (this.state.status === 2) {
+            return (
+                <div className={styles.delete_or_not_button}>
+                    <button className={styles.buttonWarn} onClick={() => { this.deletePhotos() }}>全部删除</button>
+                    <button className={styles.buttonStress} onClick={() => { this.cancelDeletePhotos() }}>返回</button>
+                </div>
+            );
+        }
+        return null;
     }
 
     render() {
@@ -198,16 +273,14 @@ class ScanContent extends React.Component {
                 {/* <div className={styles.dir_parent}>
                     <button className={styles.sel_dir_button} onClick={() => { this.handleClick() }}>选择目录</button>
                 </div> */}
-                {(this.state.status === 0) ?
-                        null :
-                        <ScanLoading text={this.state.progress + "%"}> </ScanLoading>}
+                <div className={styles.spinner_parent}>
+                    {this.showLoadingOrTextView()}
+                </div>
                 <div className={styles.toast_parent}>
                     <p >{this.state.toast}</p>
                 </div>
                 <div className={styles.scan_or_cancel_button_parent}>
-                    <div className={styles.scan_or_cancel_button}>
-                        <button className={(this.state.status === 0) ? styles.buttonStress : styles.buttonWarn} onClick={() => { this.handleClick() }}>{(this.state.status === 0) ? "开始扫描" : "结束扫描"}</button>
-                    </div>
+                    {this.showWhatButtonsView()}
                 </div>
             </div>
         );
