@@ -90,15 +90,11 @@
 .scan_or_cancel_button {
     width: 150px;
     height: 50px;
-    position: absolute;
-    left: 0;
-    bottom: 100px;
-    right: 0;
-    margin: auto;
 }
 
 .button,
-.buttonStress {
+.buttonStress,
+.buttonWarn {
     /* border: 1px solid hsl(0, 0%, 93%); */
     /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 4px rgba(0, 0, 0, 0.04); */
     border: 0px;
@@ -122,7 +118,7 @@
     color: white;
 }
 
-.button:focus {
+.button:focus, .buttonStress:focus {
     outline: none;
 }
 
@@ -132,13 +128,19 @@
     color: white;
 }
 
+.buttonWarn {
+    background: #CD5C5C;
+    color: white;
+}
+
+.buttonWarn:active {
+    outline: none;
+    background: #B03A2E;
+}
+
 .buttonStress:active {
     outline: none;
     background: #0676E8;
-}
-
-.buttonStress:focus {
-    outline: none;
 }
 
 .spinner p {
@@ -154,18 +156,24 @@
     width: 100%;
     height: 40px;
     display: flex;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
 }
 
 .toast_parent p {
     font-size: 13px;
     color: #626262;
+    text-align: center;
+    width: auto;
+    height: auto;
 }
 
 .scan_or_cancel_button_parent {
     width: 100%;
     height: 100px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 
 .dir_parent {
