@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./docs/logo.png" alt="PCB-Helper" width="150">
+  <img src="./docs/logo.png" alt="photo-tools" width="150">
   <br>Photo-Tools<br>
 </h1>
 <h4 align="center">基于 Electron 构建的照片辅助工具.</h4>

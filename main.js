@@ -63,7 +63,7 @@ app.on('ready', async () => {
     img.setTemplateImage(true);
     tray = new Tray(img);
   }
-  tray.setToolTip('PCB-Helper');
+  tray.setToolTip('Photo-Tools');
   tray.on('click', () => {
     if (mainWindow.isVisible()) {
       if (mainWindow.isMinimized()) {
