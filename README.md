@@ -4,14 +4,14 @@
 </h1>
 <h4 align="center">基于 Electron 构建的嵌入式工程师辅助工具.</h4>
 <p align="center">
-  <a href="https://github.com/LiuGuoGY/PCB-Helper/actions">
-    <img src="https://img.shields.io/github/workflow/status/LiuGuoGY/PCB-Helper/BuildAndRelease?style=flat-square" alt="Github Actions">
+  <a href="https://github.com/LiuGuoGY/photo-tools/actions">
+    <img src="https://img.shields.io/github/workflow/status/LiuGuoGY/photo-tools/BuildAndRelease?style=flat-square" alt="Github Actions">
   </a>
-  <a href="https://github.com/LiuGuoGY/PCB-Helper/releases">
-    <img src="https://img.shields.io/github/release/LiuGuoGY/PCB-Helper/all.svg?style=flat-square">
+  <a href="https://github.com/LiuGuoGY/photo-tools/releases">
+    <img src="https://img.shields.io/github/release/LiuGuoGY/photo-tools/all.svg?style=flat-square">
   </a>
-  <a href="https://github.com/LiuGuoGY/PCB-Helper/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/LiuGuoGY/PCB-Helper?style=flat-square">
+  <a href="https://github.com/LiuGuoGY/photo-tools/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/LiuGuoGY/photo-tools?style=flat-square">
   </a>
 </p>
 
