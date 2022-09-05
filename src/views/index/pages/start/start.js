@@ -35,10 +35,12 @@ class ScanContent extends React.Component {
             fileNum: 0,
             //已扫描的数量
             scanNum: 0,
-            //状态: 0未扫描，1扫描中，2待删除，3删除完成
+            //状态: 0未扫描，1扫描中，2待删除，3删除中，4删除完成或未发现
             status: 0,
             //重复文件列表信息
             dupFiles: [],
+            //已删除的文件数量
+            delNum: 0,
         }
     }
 
@@ -52,6 +54,7 @@ class ScanContent extends React.Component {
                 fileNum: 0,
                 scanNum: 0,
                 progress: 0,
+                delNum: 0,
             })
             await this.checkDB();
             if (!result.canceled && result.filePaths) {
@@ -128,7 +131,7 @@ class ScanContent extends React.Component {
         await db.run('INSERT INTO photos (filename, path, hash) VALUES(?, ?, ?)', [fileName, filePath, hash]);
         this.setState({
             scanNum: this.state.scanNum + 1,
-            progress: Math.round((this.state.scanNum + 1) / this.state.fileNum * 100),
+            progress: Math.floor((this.state.scanNum + 1) / this.state.fileNum * 100),
             toast: "",
         })
     }
@@ -215,8 +218,17 @@ class ScanContent extends React.Component {
     }
 
     async deletePhotos() {
+        this.setState({
+            status: 3,
+            delNum: 0,
+            progress: 0,
+        });
         for (let i = 0; i < this.state.dupFiles.length; i++) {
-            console.log(this.state.dupFiles[i].path);
+            this.setState({
+                toast: "正在删除：" + this.state.dupFiles[i].path,
+                delNum: this.state.delNum + 1,
+                progress: Math.floor((this.state.delNum + 1) / this.state.dupFiles.length * 100),
+            });
             await this.unlink(this.state.dupFiles[i].path);
         }
         this.setState({
@@ -237,14 +249,15 @@ class ScanContent extends React.Component {
             scanNum: 0,
             status: 0,
             dupFiles: [],
+            delNum: 0,
         })
     }
 
     showLoadingOrTextView() {
-        if (this.state.status === 1) {
+        if (this.state.status === 1 || this.state.status === 3) {
             return (<ScanLoading text={this.state.progress + "%"}> </ScanLoading>);
         } else if (this.state.status === 2) {
-            return (<div>{"本次扫描共发现" + this.state.dupFiles.length + "个重复文件，是否删除？"}</div>);
+            return (<div className={styles.scan_result_text}>{"本次扫描共发现 " + this.state.dupFiles.length + " 个重复文件，是否删除？"}</div>);
         }
         return null;
     }
@@ -259,8 +272,12 @@ class ScanContent extends React.Component {
         } else if (this.state.status === 2) {
             return (
                 <div className={styles.delete_or_not_button}>
-                    <button className={styles.buttonWarn} onClick={() => { this.deletePhotos() }}>全部删除</button>
-                    <button className={styles.buttonStress} onClick={() => { this.cancelDeletePhotos() }}>返回</button>
+                    <div>
+                        <button className={styles.buttonWarn} onClick={() => { this.deletePhotos() }}>全部删除</button>
+                    </div>
+                    <div>
+                        <button className={styles.buttonStress} onClick={() => { this.cancelDeletePhotos() }}>返回</button>
+                    </div>
                 </div>
             );
         }

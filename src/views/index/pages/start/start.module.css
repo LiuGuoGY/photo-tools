@@ -7,7 +7,7 @@
 }
 
 .page_parent {
-    -webkit-app-region: no-drag;
+    /* -webkit-app-region: no-drag; */
     margin: 20px;
     display: flex;
     align-items: center;
@@ -185,6 +185,13 @@
     flex-direction: row;
 }
 
+.delete_or_not_button div {
+    width: 150px;
+    height: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 .dir_parent {
     width: 100%;
     height: 30px;
@@ -202,4 +209,8 @@
     padding: 1px 10px 1px 10px;
     background: rgb(130, 130, 130);
     color: black;
+}
+
+.scan_result_text {
+    font-size: 20px;
 }

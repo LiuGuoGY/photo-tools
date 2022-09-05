@@ -1,5 +1,5 @@
 // 引入electron并创建一个Browserwindow
-const {app, BrowserWindow, Tray, Menu, nativeImage} = require('electron')
+const { app, BrowserWindow, Tray, Menu, nativeImage } = require('electron')
 const path = require('path')
 const url = require('url')
 const autoUpdater = require('./src/update');
@@ -10,15 +10,15 @@ let tray;
 
 
 
-function createWindow () {
+function createWindow() {
   //创建浏览器窗口,宽高自定义具体大小你开心就好
   mainWindow = new BrowserWindow({
-    width: 900, 
+    width: 900,
     height: 600,
     minWidth: 900,
     minHeight: 600,
     titleBarStyle: 'hidden',
-    frame: (process.platform === "win32")?false:true,
+    frame: (process.platform === "win32") ? false : true,
     resizable: true,
     webPreferences: {
       enableRemoteModule: true,
@@ -29,7 +29,7 @@ function createWindow () {
   // 加载应用----适用于 react 项目
   // mainWindow.loadURL('http://localhost:3000/');
   let startUrl = "";
-  if(process.env.ELECTRON_START_URL) {
+  if (process.env.ELECTRON_START_URL) {
     startUrl = process.env.ELECTRON_START_URL;
   } else {
     startUrl = url.format({
@@ -40,7 +40,7 @@ function createWindow () {
     process.env.REACT_APP_ROOT_DIR = __dirname;
   }
   mainWindow.loadURL(startUrl);
-  
+
   // 打开开发者工具，默认不打开
   mainWindow.webContents.openDevTools();
 
@@ -65,8 +65,8 @@ app.on('ready', async () => {
   }
   tray.setToolTip('PCB-Helper');
   tray.on('click', () => {
-    if(mainWindow.isVisible()) {
-      if(mainWindow.isMinimized()) {
+    if (mainWindow.isVisible()) {
+      if (mainWindow.isMinimized()) {
         mainWindow.restore();
       } else {
         mainWindow.hide();
@@ -106,7 +106,7 @@ app.on('window-all-closed', function () {
 })
 
 app.on('activate', function () {
-   // macOS中点击Dock图标时没有已打开的其余应用窗口时,则通常在应用中重建一个窗口
+  // macOS中点击Dock图标时没有已打开的其余应用窗口时,则通常在应用中重建一个窗口
   if (mainWindow === null) {
     createWindow()
   }
