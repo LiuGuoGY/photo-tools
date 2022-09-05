@@ -47,6 +47,7 @@ class ScanContent extends React.Component {
     }
 
     async handleClick() {
+        let controllerId = remote.powerSaveBlocker.start("prevent-display-sleep"); //保持屏幕常亮
         if (this.state.status === 0 || this.state.status === 4) {
             let result = await remote.dialog.showOpenDialog({
                 title: "选择目录",
@@ -118,7 +119,7 @@ class ScanContent extends React.Component {
                 progress: 0,
             })
         }
-
+        remote.powerSaveBlocker.stop(controllerId); //停止屏幕常亮
     }
 
     async checkDB() {
