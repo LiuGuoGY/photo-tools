@@ -29,7 +29,7 @@ class ScanContent extends React.Component {
         this.state = {
             //进度
             progress: 0,
-            //提示文字
+            //小提示文字
             toast: "",
             //总文件数量
             fileNum: 0,
@@ -41,11 +41,13 @@ class ScanContent extends React.Component {
             dupFiles: [],
             //已删除的文件数量
             delNum: 0,
+            //大提示文字
+            title: "",
         }
     }
 
     async handleClick() {
-        if (this.state.status === 0) {
+        if (this.state.status === 0 || this.state.status === 4) {
             let result = await remote.dialog.showOpenDialog({
                 title: "选择目录",
                 properties: ['openDirectory'],
@@ -94,10 +96,16 @@ class ScanContent extends React.Component {
                     this.setState({
                         status: 2,
                         dupFiles: res,
+                        title: "本次扫描共发现 " + res.length + " 个重复照片，是否删除？",
                     })
                 } else {
                     this.setState({
-                        status: 0,
+                        status: 4,
+                        fileNum: 0,
+                        scanNum: 0,
+                        toast: "",
+                        progress: 0,
+                        title: "恭喜！本次扫描未发现重复照片！",
                     })
                 }
             }
@@ -242,8 +250,9 @@ class ScanContent extends React.Component {
             toast: "",
             fileNum: 0,
             scanNum: 0,
-            status: 0,
+            status: 4,
             dupFiles: [],
+            title: "恭喜！所有重复照片清理完成！"
         })
     }
 
@@ -260,19 +269,27 @@ class ScanContent extends React.Component {
     }
 
     showLoadingOrTextView() {
-        if (this.state.status === 1 || this.state.status === 3) {
+        if(this.state.status === 0) {
+            return (<div className={styles.scan_result_text}>点击下方按钮开始扫描并清理重复照片</div>);
+        } else if (this.state.status === 1 || this.state.status === 3) {
             return (<ScanLoading text={this.state.progress + "%"}> </ScanLoading>);
-        } else if (this.state.status === 2) {
-            return (<div className={styles.scan_result_text}>{"本次扫描共发现 " + this.state.dupFiles.length + " 个重复照片，是否删除？"}</div>);
+        } else if (this.state.status === 2 || this.state.status === 4) {
+            return (<div className={styles.scan_result_text}>{this.state.title}</div>);
         }
         return null;
     }
 
     showWhatButtonsView() {
-        if (this.state.status === 0 || this.state.status === 1) {
+        if (this.state.status === 0 || this.state.status === 4) {
             return (
                 <div className={styles.scan_or_cancel_button}>
-                    <button className={(this.state.status === 0) ? styles.buttonStress : styles.buttonWarn} onClick={() => { this.handleClick() }}>{(this.state.status === 0) ? "开始扫描" : "结束扫描"}</button>
+                    <button className={styles.buttonStress} onClick={() => { this.handleClick() }}>开始扫描</button>
+                </div>
+            );
+        } else if (this.state.status === 1) {
+            return (
+                <div className={styles.scan_or_cancel_button}>
+                    <button className={styles.buttonWarn} onClick={() => { this.handleClick() }}>结束扫描</button>
                 </div>
             );
         } else if (this.state.status === 2) {
