@@ -79,7 +79,9 @@ class ScanContent extends React.Component {
                 await this.findAllfiles(dirPath, async (file) => {
                     await this.handleFile(file);
                 });
-                await db.connect(Path.join(userPath, dbPath));
+                this.setState({
+                    toast: "",
+                });
                 let res = await db.all(`SELECT * FROM photos
                 WHERE id > (
                   SELECT MIN(id) FROM photos d2  
@@ -132,7 +134,6 @@ class ScanContent extends React.Component {
         this.setState({
             scanNum: this.state.scanNum + 1,
             progress: Math.floor((this.state.scanNum + 1) / this.state.fileNum * 100),
-            toast: "",
         })
     }
 
@@ -202,7 +203,12 @@ class ScanContent extends React.Component {
                 }
             }
         } catch (e) {
-            console.log(e)
+            console.log(e);
+            // remote.dialog.showMessageBox({
+            //     title: "错误",
+            //     message: e.toString(),
+            //     type: "error"
+            // })
         }
     }
 
@@ -257,7 +263,7 @@ class ScanContent extends React.Component {
         if (this.state.status === 1 || this.state.status === 3) {
             return (<ScanLoading text={this.state.progress + "%"}> </ScanLoading>);
         } else if (this.state.status === 2) {
-            return (<div className={styles.scan_result_text}>{"本次扫描共发现 " + this.state.dupFiles.length + " 个重复文件，是否删除？"}</div>);
+            return (<div className={styles.scan_result_text}>{"本次扫描共发现 " + this.state.dupFiles.length + " 个重复照片，是否删除？"}</div>);
         }
         return null;
     }
