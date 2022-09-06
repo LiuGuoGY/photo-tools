@@ -83,7 +83,7 @@ class ScanContent extends React.Component {
                     await this.handleFile(file);
                 });
                 this.setState({
-                    toast: "",
+                    toast: "正在分析重复照片...",
                 });
                 let res = await db.all(`SELECT * FROM photos
                 WHERE id > (
@@ -93,6 +93,9 @@ class ScanContent extends React.Component {
                 console.log("结果：")
                 console.log(res);
                 db.close();
+                this.setState({
+                    toast: "",
+                });
                 if (res && res.length > 0) {
                     this.setState({
                         status: 2,
